@@ -66,68 +66,14 @@ const Header: React.FC<HeaderProps> = ({ user, onSignOut }) => {
   }, [showDropdown]);
 
   return (
-    <div className="absolute top-0 left-0 right-0 z-50 py-4 px-6">
+    <div className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-white/95 backdrop-blur-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center space-x-3">
           <div className="relative">
-            <motion.div
-              animate={{
-                rotate: [0, 10, -10, 0],
-                scale: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              <Magnet className="w-8 h-8 text-red-500" />
-            </motion.div>
-
-            {/* Magnetic field rings */}
-            <motion.div
-              animate={{
-                scale: [1, 1.3, 1],
-                opacity: [0.3, 0.6, 0.3]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute inset-0 rounded-full border-2 border-red-300"
-            />
-            <motion.div
-              animate={{
-                scale: [1.2, 1.6, 1.2],
-                opacity: [0.2, 0.4, 0.2]
-              }}
-              transition={{
-                duration: 2.5,
-                repeat: Infinity,
-                delay: 0.5,
-                ease: "easeInOut"
-              }}
-              className="absolute inset-0 rounded-full border-2 border-blue-300"
-            />
-
-            {/* Dynamic sparks */}
-            <motion.div
-              animate={{
-                rotate: [0, 360],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className="absolute inset-0"
-            >
-              <Zap className="w-4 h-4 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
-              <Zap className="w-3 h-3 text-yellow-400 absolute -top-2 left-1 animate-pulse" style={{ animationDelay: '0.5s' }} />
-            </motion.div>
+            <div className="w-8 h-8 text-red-500">
+              <Magnet className="w-8 h-8" />
+            </div>
           </div>
           <div>
             <h1 className="text-3xl font-extrabold text-blue-600">
@@ -143,15 +89,13 @@ const Header: React.FC<HeaderProps> = ({ user, onSignOut }) => {
             <>
               {/* Profile Button with Dropdown */}
               <div className="relative" ref={dropdownRef}>
-                <motion.div
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
+                <div
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="relative cursor-pointer"
+                  className="relative cursor-pointer hover:scale-105 transition-transform duration-200"
                 >
                   {/* Profile Image Button */}
                   <div className="relative">
-                    <div className="w-12 h-12 rounded-full border-2 border-gray-800 shadow-[4px_4px_0_0_rgb(17,24,39)] hover:shadow-[6px_6px_0_0_rgb(17,24,39)] transition-all duration-200 overflow-hidden bg-white">
+                    <div className="w-12 h-12 rounded-full border-2 border-gray-800 shadow-lg overflow-hidden bg-white">
                       {user.picture ? (
                         <img
                           src={user.picture}
@@ -172,19 +116,14 @@ const Header: React.FC<HeaderProps> = ({ user, onSignOut }) => {
                         </div>
                       )}
                     </div>
-                    {/* Green Online Indicator - Outside the overflow container */}
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-gray-800 rounded-full shadow-sm z-10"></div>
+                    {/* Green Online Indicator */}
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full z-10"></div>
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Dropdown Menu */}
                 {showDropdown && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-2 w-max bg-white border-2 border-gray-800 rounded-lg shadow-[8px_8px_0_0_rgb(17,24,39)] z-50"
-                  >
+                  <div className="absolute right-0 mt-2 w-max bg-white border-2 border-gray-800 rounded-lg shadow-xl z-50">
                     <div className="p-4">
                       <div className="flex items-center space-x-3">
                         {user.picture ? (
@@ -214,19 +153,17 @@ const Header: React.FC<HeaderProps> = ({ user, onSignOut }) => {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
               </div>
 
               {/* Sign Out Button */}
-              <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={onSignOut}
-                className="px-6 py-3 bg-red-500 text-white font-bold rounded-lg border-2 border-gray-800 shadow-[4px_4px_0_0_rgb(17,24,39)] hover:shadow-[6px_6px_0_0_rgb(17,24,39)] transition-all duration-200"
+                className="px-6 py-3 bg-red-500 text-white font-bold rounded-lg border-2 border-gray-800 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
               >
                 Sign Out
-              </motion.button>
+              </button>
             </>
           ) : shouldRenderGoogleButton ? (
             // Show Google Sign In button ONLY when NOT signed in and should render
