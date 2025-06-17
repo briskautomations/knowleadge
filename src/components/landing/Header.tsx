@@ -66,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ user, onSignOut }) => {
   }, [showDropdown]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-white border-b-2 border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center space-x-3">
@@ -240,7 +240,7 @@ const Header: React.FC<HeaderProps> = ({ user, onSignOut }) => {
           ) : null}
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
