@@ -67,7 +67,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-6 py-12 overflow-hidden bg-gradient-to-br from-blue-50 to-white pt-24">
+    <section className="relative min-h-screen flex items-center justify-center px-6 py-12 overflow-hidden bg-gradient-to-br from-blue-50 to-white pt-32">
       {/* Background Paper Texture */}
       <div className="absolute inset-0 opacity-10">
         <div className="w-full h-full" style={{
