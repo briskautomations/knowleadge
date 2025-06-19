@@ -151,7 +151,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
   };
 
   return (
-    <section className="relative min-h-[calc(100vh+50px)] flex items-center justify-center px-6 py-12 overflow-hidden bg-gradient-to-br from-blue-50 to-white">
+    <section className="relative min-h-screen flex items-center justify-center px-6 py-8 overflow-hidden bg-gradient-to-br from-blue-50 to-white">
       {/* Background Paper Texture */}
       <div className="absolute inset-0 opacity-10">
         <div className="w-full h-full" style={{
@@ -171,7 +171,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
         particleDensity={50}
       />
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 mt-20">
+      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 mt-20">
         {/* Main Headline */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -194,10 +194,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
             AI-Powered Lead Research
           </p>
         </motion.div>
-        
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Drop your prospect - we'll handle the rest.
-        </p>
 
         {/* Multi-Platform Input System */}
         <motion.div
@@ -206,19 +202,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
           transition={{ delay: 0.5 }}
           className="max-w-3xl mx-auto"
         >
-          <div className="relative p-8 bg-white border-3 border-gray-900 rounded-3xl shadow-[12px_12px_0_0_rgb(17,24,39)] transform hover:rotate-1 transition-all duration-300">
+          <div className="relative p-6 bg-white border-3 border-gray-900 rounded-3xl shadow-[12px_12px_0_0_rgb(17,24,39)] transform hover:rotate-1 transition-all duration-300">
             {/* Decorative elements */}
             <div className="absolute top-4 right-4 w-6 h-6 border-2 border-yellow-400 rounded-full opacity-60"></div>
             <div className="absolute bottom-4 left-4 w-8 h-1 bg-blue-400 opacity-60 transform -rotate-12"></div>
             
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div className="text-center">
-                <h4 className="text-2xl font-black text-gray-900 mb-3">Drop Your Prospect URLs</h4>
-                <p className="text-gray-600 mb-6">Select platforms and add multiple URLs - we'll extract insights from all of them</p>
+                <h4 className="text-2xl font-black text-gray-900 mb-2">Drop Your Prospect URLs</h4>
+                <p className="text-gray-600 mb-4">Any profile or website - we'll extract the insights</p>
                 
                 {/* Platform Selection */}
-                <div className="mb-6">
-                  <p className="text-sm font-bold text-gray-700 mb-3">Choose Platforms:</p>
+                <div className="mb-5">
                   <div className="flex flex-wrap items-center justify-center gap-3">
                     {platforms.map((platform) => {
                       const isSelected = selectedPlatforms.includes(platform.id);
@@ -264,7 +259,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="space-y-4"
+                  className="space-y-3"
                 >
                   {selectedPlatforms.map((platformId) => {
                     const platform = platforms.find(p => p.id === platformId)!;
@@ -275,7 +270,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                         key={platformId}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className={`relative p-4 ${platform.bgColor} border-2 ${platform.borderColor} rounded-xl shadow-md transform rotate-1 hover:rotate-0 transition-all duration-200`}
+                        className={`relative p-3 ${platform.bgColor} border-2 ${platform.borderColor} rounded-xl shadow-md transform rotate-1 hover:rotate-0 transition-all duration-200`}
                       >
                         <div className="flex items-center space-x-3">
                           <div className={`w-10 h-10 bg-white border-2 ${platform.borderColor} rounded-lg flex items-center justify-center flex-shrink-0`}>
@@ -304,10 +299,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
 
               {/* Add More Platforms Hint */}
               {selectedPlatforms.length === 0 && (
-                <div className="text-center py-8">
-                  <div className="inline-block bg-gray-50 border-2 border-gray-300 rounded-xl p-6 transform -rotate-1">
-                    <p className="text-gray-600 font-bold mb-2">👆 Select platforms above to get started</p>
-                    <p className="text-sm text-gray-500">You can add multiple URLs from different platforms</p>
+                <div className="text-center py-6">
+                  <div className="inline-block bg-gray-50 border-2 border-gray-300 rounded-xl p-4 transform -rotate-1">
+                    <p className="text-gray-600 font-bold mb-1">👆 Select platforms above to get started</p>
+                    <p className="text-sm text-gray-500">Add multiple URLs from different platforms</p>
                   </div>
                 </div>
               )}
@@ -319,25 +314,27 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                   animate={{ opacity: 1, y: 0 }}
                   animate={isAnimating ? { scale: [1, 1.05, 1] } : {}}
                   transition={{ duration: 0.5 }}
-                  className="flex justify-center pt-4"
+                  className="flex justify-center pt-2"
                 >
                   <NorthSouthMagnetButton
-                    label={`Pull Intel from ${selectedPlatforms.length} Platform${selectedPlatforms.length > 1 ? 's' : ''}`}
+                    label={`Pull Lead Intel`}
                     onClick={handleSubmit}
                     disabled={isAnimating}
                   />
                 </motion.div>
               )}
 
-              {/* Examples */}
-              <div className="text-center pt-4">
-                <p className="text-sm text-gray-500 mb-3">💡 Pro Tip: Add multiple platforms for deeper insights!</p>
-                <div className="flex flex-wrap justify-center gap-2 text-xs">
-                  <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200 font-bold">LinkedIn + Website</span>
-                  <span className="bg-pink-50 text-pink-700 px-3 py-1 rounded-full border border-pink-200 font-bold">Instagram + YouTube</span>
-                  <span className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full border border-gray-200 font-bold">All Platforms</span>
+              {/* Examples - Compact */}
+              {selectedPlatforms.length > 0 && (
+                <div className="text-center pt-2">
+                  <p className="text-xs text-gray-500 mb-2">💡 Pro Tip: Add multiple platforms for deeper insights!</p>
+                  <div className="flex flex-wrap justify-center gap-2 text-xs">
+                    <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full border border-blue-200 font-bold">LinkedIn + Website</span>
+                    <span className="bg-pink-50 text-pink-700 px-2 py-1 rounded-full border border-pink-200 font-bold">Instagram + YouTube</span>
+                    <span className="bg-gray-50 text-gray-700 px-2 py-1 rounded-full border border-gray-200 font-bold">All Platforms</span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </motion.div>
@@ -346,7 +343,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-6 p-4 bg-green-50 border-2 border-green-400 rounded-lg max-w-md mx-auto shadow-md"
+            className="mt-4 p-4 bg-green-50 border-2 border-green-400 rounded-lg max-w-md mx-auto shadow-md"
           >
             <div className="flex items-center space-x-2 justify-center">
               <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
