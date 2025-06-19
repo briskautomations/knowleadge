@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, Globe, Linkedin, Instagram, Youtube, Plus, X, ArrowDown, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Lightbulb, Globe, Linkedin, Instagram, Youtube, Plus, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { GoogleUser } from '@/lib/google-auth';
 import SparklesCore from './SparklesCore';
@@ -20,10 +20,68 @@ interface PlatformType {
   placeholder: string;
 }
 
-// Custom Twitter/X Icon Component
+// Custom Twitter/X Icon Component - Fixed for better visibility
 const TwitterIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+);
+
+// Curved Arrow Components - Comic Book Style
+const CurvedArrowLeft: React.FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 120 80" className={className} fill="none">
+    {/* Curved arrow path */}
+    <path
+      d="M10 40 Q40 10, 80 40 Q90 45, 85 50 L75 45 Q45 25, 20 40 L25 35 L15 45 L25 55 L20 50 Q45 65, 75 45"
+      stroke="currentColor"
+      strokeWidth="4"
+      fill="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Arrow head */}
+    <path
+      d="M75 35 L85 45 L75 55 L80 50 L85 45 L80 40 Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
+const CurvedArrowRight: React.FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 120 80" className={className} fill="none">
+    {/* Curved arrow path */}
+    <path
+      d="M110 40 Q80 10, 40 40 Q30 45, 35 50 L45 45 Q75 25, 100 40 L95 35 L105 45 L95 55 L100 50 Q75 65, 45 45"
+      stroke="currentColor"
+      strokeWidth="4"
+      fill="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Arrow head */}
+    <path
+      d="M45 35 L35 45 L45 55 L40 50 L35 45 L40 40 Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
+const CurvedArrowDown: React.FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 80 100" className={className} fill="none">
+    {/* Curved arrow path */}
+    <path
+      d="M40 10 Q10 30, 40 60 Q45 70, 50 65 L45 55 Q25 35, 40 20 L35 25 L45 15 L55 25 L50 20 Q65 35, 45 55"
+      stroke="currentColor"
+      strokeWidth="4"
+      fill="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Arrow head */}
+    <path
+      d="M35 55 L45 65 L55 55 L50 60 L45 65 L40 60 Z"
+      fill="currentColor"
+    />
   </svg>
 );
 
@@ -61,7 +119,7 @@ const platforms: PlatformType[] = [
     icon: TwitterIcon,
     color: 'text-white',
     bgColor: 'bg-black',
-    borderColor: 'border-gray-400',
+    borderColor: 'border-black',
     placeholder: 'https://x.com/username'
   },
   {
@@ -222,67 +280,100 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
           Turn any URL into your competitive advantage
         </motion.p>
 
-        {/* Multi-Platform Input System with Cartoonish Arrows */}
+        {/* Multi-Platform Input System with Curved Cartoonish Arrows */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="max-w-3xl mx-auto relative"
         >
-          {/* Animated Arrows Around Container */}
+          {/* Curved Animated Arrows Around Container - Comic Book Style */}
           <motion.div
             animate={{ 
-              x: [0, 10, 0],
-              rotate: [0, 5, 0]
+              x: [0, 8, 0],
+              y: [0, -3, 0],
+              rotate: [0, 2, 0]
             }}
             transition={{ 
-              duration: 3, 
+              duration: 3.5, 
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className="absolute -left-16 top-1/2 transform -translate-y-1/2 hidden lg:block"
+            className="absolute -left-20 top-1/2 transform -translate-y-1/2 hidden lg:block"
           >
             <div className="relative">
-              <ArrowRight className="w-12 h-12 text-blue-400 opacity-60" />
-              <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full border-2 border-gray-800"></div>
+              <CurvedArrowLeft className="w-16 h-12 text-blue-500 opacity-70" />
+              {/* Decorative comic elements */}
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-gray-800"></div>
+              <div className="absolute -bottom-1 left-2 w-2 h-2 bg-pink-400 rounded-full border border-gray-800"></div>
+              {/* Comic book style "POW" effect */}
+              <motion.div
+                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                className="absolute -top-3 left-1 text-xs font-black text-blue-600 transform -rotate-12"
+              >
+                ✨
+              </motion.div>
             </div>
           </motion.div>
 
           <motion.div
             animate={{ 
-              x: [0, -10, 0],
-              rotate: [0, -5, 0]
+              x: [0, -8, 0],
+              y: [0, -3, 0],
+              rotate: [0, -2, 0]
             }}
             transition={{ 
-              duration: 3, 
+              duration: 3.5, 
               repeat: Infinity,
               ease: "easeInOut",
               delay: 1.5
             }}
-            className="absolute -right-16 top-1/2 transform -translate-y-1/2 hidden lg:block"
+            className="absolute -right-20 top-1/2 transform -translate-y-1/2 hidden lg:block"
           >
             <div className="relative">
-              <ArrowLeft className="w-12 h-12 text-red-400 opacity-60" />
-              <div className="absolute -top-2 -left-2 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-800"></div>
+              <CurvedArrowRight className="w-16 h-12 text-red-500 opacity-70" />
+              {/* Decorative comic elements */}
+              <div className="absolute -top-1 -left-1 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-800"></div>
+              <div className="absolute -bottom-1 right-2 w-2 h-2 bg-blue-400 rounded-full border border-gray-800"></div>
+              {/* Comic book style effect */}
+              <motion.div
+                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                className="absolute -top-3 right-1 text-xs font-black text-red-600 transform rotate-12"
+              >
+                💫
+              </motion.div>
             </div>
           </motion.div>
 
           <motion.div
             animate={{ 
-              y: [0, -8, 0],
-              rotate: [0, 3, 0]
+              y: [0, -6, 0],
+              x: [0, 2, 0],
+              rotate: [0, 1, 0]
             }}
             transition={{ 
-              duration: 2.5, 
+              duration: 2.8, 
               repeat: Infinity,
               ease: "easeInOut",
-              delay: 0.5
+              delay: 0.8
             }}
-            className="absolute -top-16 left-1/2 transform -translate-x-1/2 hidden lg:block"
+            className="absolute -top-20 left-1/2 transform -translate-x-1/2 hidden lg:block"
           >
             <div className="relative">
-              <ArrowDown className="w-10 h-10 text-purple-400 opacity-60" />
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-pink-400 rounded-full border border-gray-800"></div>
+              <CurvedArrowDown className="w-12 h-16 text-purple-500 opacity-70" />
+              {/* Decorative comic elements */}
+              <div className="absolute -left-1 top-2 w-2 h-2 bg-orange-400 rounded-full border border-gray-800"></div>
+              <div className="absolute -right-1 bottom-3 w-3 h-3 bg-cyan-400 rounded-full border-2 border-gray-800"></div>
+              {/* Comic book style effect */}
+              <motion.div
+                animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.9, 0.4] }}
+                transition={{ duration: 1.8, repeat: Infinity, delay: 0.3 }}
+                className="absolute top-0 left-1/2 transform -translate-x-1/2 text-xs font-black text-purple-600"
+              >
+                ⭐
+              </motion.div>
             </div>
           </motion.div>
 
@@ -357,7 +448,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                         className={`relative p-3 ${platform.bgColor} border-2 ${platform.borderColor} rounded-xl shadow-md transform rotate-1 hover:rotate-0 transition-all duration-200`}
                       >
                         <div className="flex items-center space-x-3">
-                          <div className={`w-10 h-10 bg-white border-2 ${platform.borderColor} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                          <div className={`w-10 h-10 ${platform.id === 'twitter' ? 'bg-black' : 'bg-white'} border-2 ${platform.borderColor} rounded-lg flex items-center justify-center flex-shrink-0`}>
                             <IconComponent className={`w-5 h-5 ${platform.color}`} />
                           </div>
                           <div className="flex-1">
