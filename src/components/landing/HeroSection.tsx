@@ -316,7 +316,97 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
               </motion.div>
             </div>
           </motion.div>
+{/* Comic Book Style Elements - Clean and Minimal */}
+          <motion.div
+            animate={{ 
+              x: [0, 10, 0],
+              opacity: [0.6, 0.8, 0.6]
+            }}
+            transition={{ 
+              duration: 4, 
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute -left-24 top-1/2 transform -translate-y-1/2 hidden lg:block"
+          >
+            {/* Clean Comic Arrow with Halftone */}
+            <div className="relative">
+              <svg viewBox="0 0 100 60" className="w-20 h-12" fill="none">
+                <defs>
+                  <pattern id="dots-left" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                    <circle cx="2" cy="2" r="0.8" fill="#3B82F6" opacity="0.6"/>
+                  </pattern>
+                </defs>
+                {/* Arrow shape */}
+                <path
+                  d="M20 30 L60 30 L60 20 L80 35 L60 50 L60 40 L20 40 Z"
+                  fill="url(#dots-left)"
+                  stroke="#1e293b"
+                  strokeWidth="3"
+                />
+              </svg>
+            </div>
+          </motion.div>
 
+          <motion.div
+            animate={{ 
+              x: [0, -10, 0],
+              opacity: [0.6, 0.8, 0.6]
+            }}
+            transition={{ 
+              duration: 4, 
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+            className="absolute -right-24 top-1/2 transform -translate-y-1/2 hidden lg:block"
+          >
+            {/* Clean Comic Arrow with Halftone */}
+            <div className="relative">
+              <svg viewBox="0 0 100 60" className="w-20 h-12" fill="none">
+                <defs>
+                  <pattern id="dots-right" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                    <circle cx="2" cy="2" r="0.8" fill="#EF4444" opacity="0.6"/>
+                  </pattern>
+                </defs>
+                {/* Arrow shape pointing left */}
+                <path
+                  d="M80 30 L40 30 L40 20 L20 35 L40 50 L40 40 L80 40 Z"
+                  fill="url(#dots-right)"
+                  stroke="#1e293b"
+                  strokeWidth="3"
+                />
+              </svg>
+            </div>
+          </motion.div>
+
+          {/* Small Comic Burst/Star on top left */}
+          <motion.div
+            animate={{ 
+              scale: [1, 1.1, 1],
+              rotate: [0, 5, 0]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute -top-16 left-10 hidden lg:block"
+          >
+            <svg viewBox="0 0 60 60" className="w-12 h-12" fill="none">
+              <defs>
+                <pattern id="dots-burst" x="0" y="0" width="3" height="3" patternUnits="userSpaceOnUse">
+                  <circle cx="1.5" cy="1.5" r="0.5" fill="#FCD34D" opacity="0.7"/>
+                </pattern>
+              </defs>
+              <path
+                d="M30 5 L35 20 L50 20 L38 30 L43 45 L30 35 L17 45 L22 30 L10 20 L25 20 Z"
+                fill="url(#dots-burst)"
+                stroke="#1e293b"
+                strokeWidth="2.5"
+              />
+            </svg>
+          </motion.div>
           <motion.div
             animate={{ 
               x: [0, -8, 0],
