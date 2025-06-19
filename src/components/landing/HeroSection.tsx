@@ -67,7 +67,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-6 py-12 overflow-hidden bg-gradient-to-br from-blue-50 to-white pt-24">
+    <section className="relative min-h-[calc(100vh+50px)] flex items-center justify-center px-6 py-12 overflow-hidden bg-gradient-to-br from-blue-50 to-white">
       {/* Background Paper Texture */}
       <div className="absolute inset-0 opacity-10">
         <div className="w-full h-full" style={{
@@ -87,7 +87,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
         particleDensity={50}
       />
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
+      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 mt-20">
         {/* Main Headline */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
