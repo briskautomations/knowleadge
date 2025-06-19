@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, Globe } from 'lucide-react';
+import { Lightbulb, Globe, Linkedin, Instagram, Youtube, Twitter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { GoogleUser } from '@/lib/google-auth';
 import SparklesCore from './SparklesCore';
@@ -112,10 +112,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
         </motion.div>
         
         <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Every conversation starts with an advantage.
+          Drop your prospect - we'll handle the rest.
         </p>
 
-        {/* Input and Button - Ultra Clean Design */}
+        {/* Input and Button - Enhanced for Multiple Platforms */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -129,15 +129,49 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
             
             <div className="space-y-6">
               <div className="text-center">
-                <h4 className="text-2xl font-black text-gray-900 mb-2">Drop Your Prospect URL</h4>
-                <p className="text-gray-600">LinkedIn, website, social profile - we'll handle the rest</p>
+                <h4 className="text-2xl font-black text-gray-900 mb-3">Drop Your Prospect URL</h4>
+                <p className="text-gray-600 mb-4">Any profile or website - we'll extract the insights</p>
+                
+                {/* Platform Icons */}
+                <div className="flex items-center justify-center space-x-4 mb-4">
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="w-10 h-10 bg-blue-100 border-2 border-blue-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Linkedin className="w-5 h-5 text-blue-600" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    className="w-10 h-10 bg-gray-100 border-2 border-gray-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Globe className="w-5 h-5 text-gray-600" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="w-10 h-10 bg-pink-100 border-2 border-pink-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Instagram className="w-5 h-5 text-pink-600" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    className="w-10 h-10 bg-black border-2 border-gray-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Twitter className="w-5 h-5 text-white" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="w-10 h-10 bg-red-100 border-2 border-red-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Youtube className="w-5 h-5 text-red-600" />
+                  </motion.div>
+                </div>
               </div>
               
               <div className="relative">
                 <Input
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://linkedin.com/in/prospect-name"
+                  placeholder="https://linkedin.com/in/prospect-name or any website/profile"
                   className="w-full border-2 border-gray-300 rounded-xl text-lg p-4 pr-12 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50"
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
@@ -146,6 +180,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                   }}
                 />
                 <Globe className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </div>
+
+              {/* Example URLs */}
+              <div className="text-center">
+                <p className="text-sm text-gray-500 mb-2">Examples:</p>
+                <div className="flex flex-wrap justify-center gap-2 text-xs">
+                  <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-200">LinkedIn profiles</span>
+                  <span className="bg-gray-50 text-gray-700 px-2 py-1 rounded border border-gray-200">Company websites</span>
+                  <span className="bg-pink-50 text-pink-700 px-2 py-1 rounded border border-pink-200">Instagram accounts</span>
+                  <span className="bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200">YouTube channels</span>
+                  <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded border border-purple-200">X/Twitter profiles</span>
+                </div>
               </div>
               
               <motion.div
