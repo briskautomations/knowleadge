@@ -79,6 +79,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
   const [urls, setUrls] = useState<Record<string, string>>({});
   const [isAnimating, setIsAnimating] = useState(false);
 
+  // Check if button should be active
+  const getFilledUrls = () => {
+    return selectedPlatforms.filter(platformId => urls[platformId]?.trim()).length;
+  };
+
+  const isButtonActive = user && selectedPlatforms.length > 0 && getFilledUrls() > 0;
+
   const togglePlatform = (platformId: string) => {
     if (selectedPlatforms.includes(platformId)) {
       setSelectedPlatforms(prev => prev.filter(id => id !== platformId));
@@ -110,7 +117,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
   };
 
   const handleSubmit = async () => {
-    const filledUrls = Object.entries(urls).filter(([_, url]) => url.trim());
+    // Get all filled URLs with platform names
+    const filledUrls = selectedPlatforms
+      .filter(platformId => urls[platformId]?.trim())
+      .map(platformId => {
+        const platform = platforms.find(p => p.id === platformId);
+        return {
+          platform: platform?.name || platformId,
+          url: urls[platformId].trim()
+        };
+      });
     
     if (filledUrls.length === 0) {
       alert('Please enter at least one URL');
@@ -125,22 +141,27 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
     setIsAnimating(true);
     
     try {
-      console.log('Sending webhook request with:', {
-        urls: filledUrls,
+      // Create webhook payload with individual URLs and platform info
+      const webhookData = {
         email: user.email,
-        name: user.name
-      });
+        name: user.name,
+        urls: filledUrls,
+        // Also send individual platform URLs for backward compatibility
+        linkedin_url: urls.linkedin?.trim() || '',
+        website_url: urls.website?.trim() || '',
+        instagram_url: urls.instagram?.trim() || '',
+        twitter_url: urls.twitter?.trim() || '',
+        youtube_url: urls.youtube?.trim() || ''
+      };
+
+      console.log('Sending webhook request with:', webhookData);
 
       const response = await fetch('https://n8n.srv850687.hstgr.cloud/webhook/knowleadge', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          urls: filledUrls,
-          email: user.email,
-          name: user.name
-        }),
+        body: JSON.stringify(webhookData),
       });
 
       if (response.ok) {
@@ -352,22 +373,22 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                   >
                     <button
                       onClick={handleSubmit}
-                      disabled={!user || Object.keys(urls).length === 0 || isAnimating}
+                      disabled={!isButtonActive || isAnimating}
                       className={`relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white rounded-2xl overflow-hidden
-                        bg-gradient-to-r from-blue-500 via-gray-300 to-red-500
-                        hover:from-blue-600 hover:via-gray-400 hover:to-red-600
-                        active:translate-y-0.5 active:shadow-none
                         transition-all duration-200 ease-in-out
                         shadow-[0_6px_0_0_rgba(0,0,0,0.3)]
                         border-2 border-gray-800
-                        ${(!user || Object.keys(urls).length === 0 || isAnimating) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                        ${isButtonActive && !isAnimating
+                          ? 'bg-gradient-to-r from-blue-500 via-gray-300 to-red-500 hover:from-blue-600 hover:via-gray-400 hover:to-red-600 cursor-pointer active:translate-y-0.5 active:shadow-none'
+                          : 'bg-gray-400 cursor-not-allowed opacity-50'
+                        }
                       `}
                     >
                       {/* South Pole - Left */}
-                      <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-xs font-black text-white bg-blue-600 px-2 py-1 rounded">S</div>
+                      <div className={`absolute left-2 top-1/2 transform -translate-y-1/2 text-xs font-black text-white px-2 py-1 rounded ${isButtonActive ? 'bg-blue-600' : 'bg-gray-600'}`}>S</div>
                       
                       {/* North Pole - Right */}
-                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs font-black text-white bg-red-600 px-2 py-1 rounded">N</div>
+                      <div className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-xs font-black text-white px-2 py-1 rounded ${isButtonActive ? 'bg-red-600' : 'bg-gray-600'}`}>N</div>
                       
                       <span className="relative z-10 flex items-center space-x-2 text-gray-900 font-black">
                         {isAnimating ? (
@@ -380,22 +401,41 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                         )}
                       </span>
                       
-                      {/* Magnetic field lines - only on hover */}
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        whileHover={{ scale: [0, 1, 1.2, 0], opacity: [0, 0.6, 0.3, 0] }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                        className="absolute inset-0 rounded-2xl border-2 border-yellow-400"
-                      />
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        whileHover={{ scale: [0, 1, 1.2, 0], opacity: [0, 0.6, 0.3, 0] }}
-                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
-                        className="absolute inset-0 rounded-2xl border-2 border-yellow-400"
-                      />
+                      {/* Magnetic field lines - only on hover when active */}
+                      {isButtonActive && !isAnimating && (
+                        <>
+                          <motion.div
+                            initial={{ scale: 0, opacity: 0 }}
+                            whileHover={{ scale: [0, 1, 1.2, 0], opacity: [0, 0.6, 0.3, 0] }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            className="absolute inset-0 rounded-2xl border-2 border-yellow-400"
+                          />
+                          <motion.div
+                            initial={{ scale: 0, opacity: 0 }}
+                            whileHover={{ scale: [0, 1, 1.2, 0], opacity: [0, 0.6, 0.3, 0] }}
+                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
+                            className="absolute inset-0 rounded-2xl border-2 border-yellow-400"
+                          />
+                        </>
+                      )}
                     </button>
                   </motion.div>
                 </motion.div>
+              )}
+
+              {/* Status Messages */}
+              {selectedPlatforms.length > 0 && (
+                <div className="text-center text-sm">
+                  {!user ? (
+                    <p className="text-red-600 font-semibold">Please sign in to start research</p>
+                  ) : getFilledUrls() === 0 ? (
+                    <p className="text-gray-600">Enter at least one URL to activate research</p>
+                  ) : (
+                    <p className="text-green-600 font-semibold">
+                      Ready to research {getFilledUrls()} platform{getFilledUrls() > 1 ? 's' : ''}!
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           </div>
