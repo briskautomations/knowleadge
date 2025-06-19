@@ -7,7 +7,7 @@
     <title>Knowleadge - AI-Powered Lead Research</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-      /* Custom styles for Google Sign-In button - Blue Theme */
+      /* Custom styles for Google Sign-In button */
       .google-signin-button {
         display: inline-block;
       }
@@ -26,12 +26,12 @@
         background: #2563eb !important;
       }
 
-      /* Override Google's button iframe */
+      /* Override Google's button text */
       .google-signin-button iframe {
         border-radius: 8px !important;
       }
 
-      /* Force blue background and white text */
+      /* Custom button styling to match design */
       .google-signin-button > div > div {
         background: #3b82f6 !important;
         color: white !important;
@@ -41,32 +41,11 @@
 
       .google-signin-button > div > div > div {
         color: white !important;
-        background: #3b82f6 !important;
       }
 
       .google-signin-button > div > div > div > span {
         color: white !important;
         font-weight: bold !important;
-      }
-
-      /* Override any Google branding colors */
-      .google-signin-button [role="button"] {
-        background-color: #3b82f6 !important;
-        color: white !important;
-      }
-
-      .google-signin-button [role="button"]:hover {
-        background-color: #2563eb !important;
-      }
-
-      /* Force all text elements to be white */
-      .google-signin-button * {
-        color: white !important;
-      }
-
-      /* Override Google logo area to maintain blue theme */
-      .google-signin-button svg {
-        filter: brightness(0) invert(1) !important;
       }
     </style>
   </head>
