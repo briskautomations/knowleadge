@@ -26,16 +26,6 @@ const TwitterIcon: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-// URL validation function
-const isValidUrl = (string: string): boolean => {
-  try {
-    const url = new URL(string);
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch (_) {
-    return false;
-  }
-};
-
 const platforms: PlatformType[] = [
   {
     id: 'linkedin',
@@ -87,18 +77,14 @@ const platforms: PlatformType[] = [
 const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [urls, setUrls] = useState<Record<string, string>>({});
-  const [urlErrors, setUrlErrors] = useState<Record<string, string>>({});
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Check if button should be active - now requires valid URLs
-  const getValidUrls = () => {
-    return selectedPlatforms.filter(platformId => {
-      const url = urls[platformId]?.trim();
-      return url && isValidUrl(url);
-    }).length;
+  // Check if button should be active
+  const getFilledUrls = () => {
+    return selectedPlatforms.filter(platformId => urls[platformId]?.trim()).length;
   };
 
-  const isButtonActive = user && selectedPlatforms.length > 0 && getValidUrls() > 0;
+  const isButtonActive = user && selectedPlatforms.length > 0 && getFilledUrls() > 0;
 
   const togglePlatform = (platformId: string) => {
     if (selectedPlatforms.includes(platformId)) {
@@ -107,11 +93,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
         const newUrls = { ...prev };
         delete newUrls[platformId];
         return newUrls;
-      });
-      setUrlErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[platformId];
-        return newErrors;
       });
     } else {
       setSelectedPlatforms(prev => [...prev, platformId]);
@@ -126,11 +107,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
       delete newUrls[platformId];
       return newUrls;
     });
-    setUrlErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors[platformId];
-      return newErrors;
-    });
   };
 
   const updateUrl = (platformId: string, url: string) => {
@@ -138,37 +114,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
       ...prev,
       [platformId]: url
     }));
-
-    // Validate URL in real-time
-    if (url.trim()) {
-      if (isValidUrl(url.trim())) {
-        setUrlErrors(prev => {
-          const newErrors = { ...prev };
-          delete newErrors[platformId];
-          return newErrors;
-        });
-      } else {
-        setUrlErrors(prev => ({
-          ...prev,
-          [platformId]: 'Please enter a valid URL (must start with http:// or https://)'
-        }));
-      }
-    } else {
-      setUrlErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[platformId];
-        return newErrors;
-      });
-    }
   };
 
   const handleSubmit = async () => {
-    // Get all valid URLs with platform names
-    const validUrls = selectedPlatforms
-      .filter(platformId => {
-        const url = urls[platformId]?.trim();
-        return url && isValidUrl(url);
-      })
+    // Get all filled URLs with platform names
+    const filledUrls = selectedPlatforms
+      .filter(platformId => urls[platformId]?.trim())
       .map(platformId => {
         const platform = platforms.find(p => p.id === platformId);
         return {
@@ -177,8 +128,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
         };
       });
     
-    if (validUrls.length === 0) {
-      alert('Please enter at least one valid URL');
+    if (filledUrls.length === 0) {
+      alert('Please enter at least one URL');
       return;
     }
 
@@ -194,13 +145,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
       const webhookData = {
         email: user.email,
         name: user.name,
-        urls: validUrls,
+        urls: filledUrls,
         // Also send individual platform URLs for backward compatibility
-        linkedin_url: (urls.linkedin?.trim() && isValidUrl(urls.linkedin.trim())) ? urls.linkedin.trim() : '',
-        website_url: (urls.website?.trim() && isValidUrl(urls.website.trim())) ? urls.website.trim() : '',
-        instagram_url: (urls.instagram?.trim() && isValidUrl(urls.instagram.trim())) ? urls.instagram.trim() : '',
-        twitter_url: (urls.twitter?.trim() && isValidUrl(urls.twitter.trim())) ? urls.twitter.trim() : '',
-        youtube_url: (urls.youtube?.trim() && isValidUrl(urls.youtube.trim())) ? urls.youtube.trim() : ''
+        linkedin_url: urls.linkedin?.trim() || '',
+        website_url: urls.website?.trim() || '',
+        instagram_url: urls.instagram?.trim() || '',
+        twitter_url: urls.twitter?.trim() || '',
+        youtube_url: urls.youtube?.trim() || ''
       };
 
       console.log('Sending webhook request with:', webhookData);
@@ -219,7 +170,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
         alert('Lead research initiated! You will receive results via email.');
         setUrls({});
         setSelectedPlatforms([]);
-        setUrlErrors({});
       } else {
         throw new Error(`Failed to submit request: ${response.status}`);
       }
@@ -376,9 +326,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                     if (!platform) return null;
                     
                     const Icon = platform.icon;
-                    const hasError = urlErrors[platformId];
-                    const url = urls[platformId] || '';
-                    const isValidInput = url.trim() && isValidUrl(url.trim());
                     
                     return (
                       <motion.div
@@ -395,24 +342,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                             <Input
                               type="url"
                               placeholder={platform.placeholder}
-                              value={url}
+                              value={urls[platformId] || ''}
                               onChange={(e) => updateUrl(platformId, e.target.value)}
-                              className={`w-full border-2 rounded-xl text-lg p-4 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 ${
-                                hasError 
-                                  ? 'border-red-400 focus:border-red-500' 
-                                  : isValidInput 
-                                    ? 'border-green-400 focus:border-green-500'
-                                    : 'border-gray-300 focus:border-blue-500'
-                              }`}
+                              className="w-full border-2 border-gray-300 rounded-xl text-lg p-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50"
                             />
-                            {hasError && (
-                              <p className="text-red-500 text-xs mt-1 ml-2">{hasError}</p>
-                            )}
-                            {isValidInput && (
-                              <p className="text-green-600 text-xs mt-1 ml-2 flex items-center">
-                                <span className="mr-1">✓</span> Valid URL
-                              </p>
-                            )}
                           </div>
                           <button
                             onClick={(e) => removePlatform(platformId, e)}
@@ -427,7 +360,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                 </motion.div>
               )}
 
-              {/* Submit Button - Always shows magnet design, but dimmed when inactive */}
+              {/* Submit Button - Using your existing NorthSouthMagnetButton design */}
               {selectedPlatforms.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -442,21 +375,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                       onClick={handleSubmit}
                       disabled={!isButtonActive || isAnimating}
                       className={`relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white rounded-2xl overflow-hidden
-                        bg-gradient-to-r from-blue-500 via-gray-300 to-red-500
                         transition-all duration-200 ease-in-out
                         shadow-[0_6px_0_0_rgba(0,0,0,0.3)]
                         border-2 border-gray-800
                         ${isButtonActive && !isAnimating
-                          ? 'hover:from-blue-600 hover:via-gray-400 hover:to-red-600 cursor-pointer active:translate-y-0.5 active:shadow-none opacity-100'
-                          : 'cursor-not-allowed opacity-60'
+                          ? 'bg-gradient-to-r from-blue-500 via-gray-300 to-red-500 hover:from-blue-600 hover:via-gray-400 hover:to-red-600 cursor-pointer active:translate-y-0.5 active:shadow-none'
+                          : 'bg-gray-400 cursor-not-allowed opacity-50'
                         }
                       `}
                     >
                       {/* South Pole - Left */}
-                      <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-xs font-black text-white bg-blue-600 px-2 py-1 rounded">S</div>
+                      <div className={`absolute left-2 top-1/2 transform -translate-y-1/2 text-xs font-black text-white px-2 py-1 rounded ${isButtonActive ? 'bg-blue-600' : 'bg-gray-600'}`}>S</div>
                       
                       {/* North Pole - Right */}
-                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs font-black text-white bg-red-600 px-2 py-1 rounded">N</div>
+                      <div className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-xs font-black text-white px-2 py-1 rounded ${isButtonActive ? 'bg-red-600' : 'bg-gray-600'}`}>N</div>
                       
                       <span className="relative z-10 flex items-center space-x-2 text-gray-900 font-black">
                         {isAnimating ? (
@@ -496,11 +428,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                 <div className="text-center text-sm">
                   {!user ? (
                     <p className="text-red-600 font-semibold">Please sign in to start research</p>
-                  ) : getValidUrls() === 0 ? (
-                    <p className="text-gray-600">Enter at least one valid URL to activate research</p>
+                  ) : getFilledUrls() === 0 ? (
+                    <p className="text-gray-600">Enter at least one URL to activate research</p>
                   ) : (
                     <p className="text-green-600 font-semibold">
-                      Ready to research {getValidUrls()} valid URL{getValidUrls() > 1 ? 's' : ''}!
+                      Ready to research {getFilledUrls()} platform{getFilledUrls() > 1 ? 's' : ''}!
                     </p>
                   )}
                 </div>
