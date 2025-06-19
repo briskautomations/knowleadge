@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Lightbulb, Globe, Linkedin, Instagram, Youtube, Plus, X, BookOpen, Palette, Star, Zap, Heart, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { GoogleUser } from '@/lib/google-auth';
-import SparklesCore from './SparklesCore';
+
+interface GoogleUser {
+  email: string;
+  name: string;
+}
 
 interface HeroSectionProps {
   user: GoogleUser | null;
@@ -18,6 +21,57 @@ interface PlatformType {
   borderColor: string;
   placeholder: string;
 }
+
+// SparklesCore Component Implementation
+interface SparklesCoreProps {
+  className?: string;
+  particleColor?: string;
+  particleDensity?: number;
+}
+
+const SparklesCore: React.FC<SparklesCoreProps> = ({ 
+  className = "", 
+  particleColor = "#FFE65A", 
+  particleDensity = 50 
+}) => {
+  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; size: number }>>([]);
+
+  useEffect(() => {
+    const newParticles = Array.from({ length: particleDensity }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 3 + 1,
+    }));
+    setParticles(newParticles);
+  }, [particleDensity]);
+
+  return (
+    <div className={className}>
+      <svg className="w-full h-full absolute inset-0" viewBox="0 0 100 100" preserveAspectRatio="none">
+        {particles.map((particle) => (
+          <motion.circle
+            key={particle.id}
+            cx={particle.x}
+            cy={particle.y}
+            r={particle.size / 10}
+            fill={particleColor}
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: [0, 1, 0],
+              scale: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </svg>
+    </div>
+  );
+};
 
 // Custom Twitter/X Icon Component
 const TwitterIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -161,7 +215,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
   };
 
   return (
-    <section className="relative min-h-[calc(100vh+50px)] flex items-center justify-center px-6 py-12 overflow-hidden bg-gradient-to-br from-blue-50 to-white">
+    <section className="relative min-h-screen flex items-center justify-center px-6 py-8 overflow-hidden bg-gradient-to-br from-blue-50 to-white">
       {/* Background Paper Texture */}
       <div className="absolute inset-0 opacity-10">
         <div className="w-full h-full" style={{
@@ -181,7 +235,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
         particleDensity={50}
       />
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 mt-20">
+      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 mt-20">
         {/* Main Headline */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -231,27 +285,31 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
             AI-Powered Lead Research
           </p>
         </motion.div>
-        
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Turn any URL into your competitive advantage.
-        </p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed"
+        >
+          Turn any URL into your competitive advantage
+        </motion.p>
 
         {/* Multi-Platform Input System */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="max-w-3xl mx-auto"
+          className="max-w-3xl mx-auto relative"
         >
-          <div className="relative p-8 bg-white border-3 border-gray-900 rounded-3xl shadow-[12px_12px_0_0_rgb(17,24,39)] transform hover:rotate-1 transition-all duration-300">
-            {/* Decorative elements */}
-            <div className="absolute top-4 right-4 w-6 h-6 border-2 border-yellow-400 rounded-full opacity-60"></div>
-            <div className="absolute bottom-4 left-4 w-8 h-1 bg-blue-400 opacity-60 transform -rotate-12"></div>
+          <div className="relative p-6 bg-white border-3 border-gray-900 rounded-3xl shadow-[12px_12px_0_0_rgb(17,24,39)] transform hover:rotate-1 transition-all duration-300 overflow-hidden">
+            {/* Clean decorative elements */}
+            <div className="absolute top-3 right-3 text-2xl opacity-30">⚡</div>
             
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div className="text-center">
-                <h4 className="text-2xl font-black text-gray-900 mb-2">Choose Your Platforms</h4>
-                <p className="text-gray-600">Select the platforms you want to research</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Choose Your Platforms</h3>
+                <p className="text-gray-600 text-sm">Select the platforms you want to research</p>
               </div>
 
               {/* Platform Selection Grid */}
@@ -323,7 +381,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                               placeholder={platform.placeholder}
                               value={urls[platformId] || ''}
                               onChange={(e) => updateUrl(platformId, e.target.value)}
-                              className="w-full border-2 border-gray-300 rounded-xl text-lg p-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50"
+                              className="w-full"
                             />
                           </div>
                           <button
@@ -339,16 +397,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                 </motion.div>
               )}
 
-              {/* Submit Button - Using your existing NorthSouthMagnetButton design */}
+              {/* Submit Button - Using your existing NorthSouthMagnetButton */}
               {selectedPlatforms.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-center"
+                  className="pt-4 text-center"
                 >
                   <motion.div
                     animate={isAnimating ? { scale: [1, 1.05, 1] } : {}}
                     transition={{ duration: 0.5 }}
+                    className="flex justify-center"
                   >
                     <button
                       onClick={handleSubmit}
