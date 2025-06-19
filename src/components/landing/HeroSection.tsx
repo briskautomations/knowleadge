@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, Globe, Linkedin, Instagram, Youtube, Twitter, Plus, X } from 'lucide-react';
+import { Lightbulb, Globe, Linkedin, Instagram, Youtube, Twitter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { GoogleUser } from '@/lib/google-auth';
 import SparklesCore from './SparklesCore';
@@ -10,96 +10,13 @@ interface HeroSectionProps {
   user: GoogleUser | null;
 }
 
-interface PlatformType {
-  id: string;
-  name: string;
-  icon: React.ComponentType<any>;
-  color: string;
-  bgColor: string;
-  borderColor: string;
-  placeholder: string;
-}
-
-const platforms: PlatformType[] = [
-  {
-    id: 'linkedin',
-    name: 'LinkedIn',
-    icon: Linkedin,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-    borderColor: 'border-blue-400',
-    placeholder: 'https://linkedin.com/in/prospect-name'
-  },
-  {
-    id: 'website',
-    name: 'Website',
-    icon: Globe,
-    color: 'text-gray-600',
-    bgColor: 'bg-gray-100',
-    borderColor: 'border-gray-400',
-    placeholder: 'https://company-website.com'
-  },
-  {
-    id: 'instagram',
-    name: 'Instagram',
-    icon: Instagram,
-    color: 'text-pink-600',
-    bgColor: 'bg-pink-100',
-    borderColor: 'border-pink-400',
-    placeholder: 'https://instagram.com/username'
-  },
-  {
-    id: 'twitter',
-    name: 'X/Twitter',
-    icon: Twitter,
-    color: 'text-white',
-    bgColor: 'bg-black',
-    borderColor: 'border-gray-400',
-    placeholder: 'https://x.com/username'
-  },
-  {
-    id: 'youtube',
-    name: 'YouTube',
-    icon: Youtube,
-    color: 'text-red-600',
-    bgColor: 'bg-red-100',
-    borderColor: 'border-red-400',
-    placeholder: 'https://youtube.com/@channel'
-  }
-];
-
 const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [urls, setUrls] = useState<Record<string, string>>({});
+  const [url, setUrl] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const togglePlatform = (platformId: string) => {
-    if (selectedPlatforms.includes(platformId)) {
-      // Remove platform
-      setSelectedPlatforms(prev => prev.filter(id => id !== platformId));
-      setUrls(prev => {
-        const newUrls = { ...prev };
-        delete newUrls[platformId];
-        return newUrls;
-      });
-    } else {
-      // Add platform
-      setSelectedPlatforms(prev => [...prev, platformId]);
-    }
-  };
-
-  const updateUrl = (platformId: string, url: string) => {
-    setUrls(prev => ({
-      ...prev,
-      [platformId]: url
-    }));
-  };
-
   const handleSubmit = async () => {
-    const filledUrls = Object.entries(urls).filter(([_, url]) => url.trim());
-    
-    if (filledUrls.length === 0) {
-      alert('Please enter at least one URL');
+    if (!url.trim()) {
+      alert('Please enter a URL');
       return;
     }
 
@@ -112,7 +29,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
     
     try {
       console.log('Sending webhook request with:', {
-        urls: filledUrls,
+        url: url,
         email: user.email,
         name: user.name
       });
@@ -123,7 +40,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          urls: filledUrls,
+          url: url,
           email: user.email,
           name: user.name
         }),
@@ -135,8 +52,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
         const result = await response.json();
         console.log('Webhook response:', result);
         alert('Lead research initiated! You will receive results via email.');
-        setUrls({});
-        setSelectedPlatforms([]);
+        setUrl(''); // Clear the input after successful submission
       } else {
         const errorText = await response.text();
         console.error('Webhook error response:', errorText);
@@ -199,12 +115,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
           Drop your prospect - we'll handle the rest.
         </p>
 
-        {/* Multi-Platform Input System */}
+        {/* Input and Button - Enhanced for Multiple Platforms */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="max-w-3xl mx-auto"
+          className="max-w-2xl mx-auto"
         >
           <div className="relative p-8 bg-white border-3 border-gray-900 rounded-3xl shadow-[12px_12px_0_0_rgb(17,24,39)] transform hover:rotate-1 transition-all duration-300">
             {/* Decorative elements */}
@@ -213,131 +129,82 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
             
             <div className="space-y-6">
               <div className="text-center">
-                <h4 className="text-2xl font-black text-gray-900 mb-3">Drop Your Prospect URLs</h4>
-                <p className="text-gray-600 mb-6">Select platforms and add multiple URLs - we'll extract insights from all of them</p>
+                <h4 className="text-2xl font-black text-gray-900 mb-3">Drop Your Prospect URL</h4>
+                <p className="text-gray-600 mb-4">Any profile or website - we'll extract the insights</p>
                 
-                {/* Platform Selection */}
-                <div className="mb-6">
-                  <p className="text-sm font-bold text-gray-700 mb-3">Choose Platforms:</p>
-                  <div className="flex flex-wrap items-center justify-center gap-3">
-                    {platforms.map((platform) => {
-                      const isSelected = selectedPlatforms.includes(platform.id);
-                      const IconComponent = platform.icon;
-                      
-                      return (
-                        <motion.button
-                          key={platform.id}
-                          onClick={() => togglePlatform(platform.id)}
-                          whileHover={{ scale: 1.05, rotate: isSelected ? 0 : 5 }}
-                          whileTap={{ scale: 0.95 }}
-                          className={`relative w-14 h-14 rounded-xl border-3 flex items-center justify-center transition-all duration-200 transform ${
-                            isSelected 
-                              ? `${platform.bgColor} ${platform.borderColor} shadow-[4px_4px_0_0_rgb(17,24,39)] rotate-3` 
-                              : 'bg-gray-100 border-gray-300 hover:border-gray-400'
-                          }`}
-                        >
-                          <IconComponent 
-                            className={`w-6 h-6 ${
-                              isSelected 
-                                ? platform.color 
-                                : 'text-gray-400'
-                            }`} 
-                          />
-                          {isSelected && (
-                            <motion.div
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              className="absolute -top-2 -right-2 w-6 h-6 bg-green-400 border-2 border-gray-900 rounded-full flex items-center justify-center"
-                            >
-                              <Plus className="w-3 h-3 text-gray-900 rotate-45" />
-                            </motion.div>
-                          )}
-                        </motion.button>
-                      );
-                    })}
-                  </div>
+                {/* Platform Icons */}
+                <div className="flex items-center justify-center space-x-4 mb-4">
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="w-10 h-10 bg-blue-100 border-2 border-blue-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Linkedin className="w-5 h-5 text-blue-600" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    className="w-10 h-10 bg-gray-100 border-2 border-gray-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Globe className="w-5 h-5 text-gray-600" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="w-10 h-10 bg-pink-100 border-2 border-pink-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Instagram className="w-5 h-5 text-pink-600" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    className="w-10 h-10 bg-black border-2 border-gray-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Twitter className="w-5 h-5 text-white" />
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="w-10 h-10 bg-red-100 border-2 border-red-400 rounded-lg flex items-center justify-center"
+                  >
+                    <Youtube className="w-5 h-5 text-red-600" />
+                  </motion.div>
                 </div>
               </div>
               
-              {/* URL Inputs for Selected Platforms */}
-              {selectedPlatforms.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="space-y-4"
-                >
-                  {selectedPlatforms.map((platformId) => {
-                    const platform = platforms.find(p => p.id === platformId)!;
-                    const IconComponent = platform.icon;
-                    
-                    return (
-                      <motion.div
-                        key={platformId}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className={`relative p-4 ${platform.bgColor} border-2 ${platform.borderColor} rounded-xl shadow-md transform rotate-1 hover:rotate-0 transition-all duration-200`}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className={`w-10 h-10 bg-white border-2 ${platform.borderColor} rounded-lg flex items-center justify-center flex-shrink-0`}>
-                            <IconComponent className={`w-5 h-5 ${platform.color}`} />
-                          </div>
-                          <div className="flex-1">
-                            <Input
-                              value={urls[platformId] || ''}
-                              onChange={(e) => updateUrl(platformId, e.target.value)}
-                              placeholder={platform.placeholder}
-                              className="border-2 border-gray-300 rounded-lg text-sm p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white"
-                            />
-                          </div>
-                          <button
-                            onClick={() => togglePlatform(platformId)}
-                            className="w-8 h-8 bg-red-400 border-2 border-gray-900 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors flex-shrink-0"
-                          >
-                            <X className="w-4 h-4 text-white" />
-                          </button>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </motion.div>
-              )}
+              <div className="relative">
+                <Input
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://linkedin.com/in/prospect-name or any website/profile"
+                  className="w-full border-2 border-gray-300 rounded-xl text-lg p-4 pr-12 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSubmit();
+                    }
+                  }}
+                />
+                <Globe className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </div>
 
-              {/* Add More Platforms Hint */}
-              {selectedPlatforms.length === 0 && (
-                <div className="text-center py-8">
-                  <div className="inline-block bg-gray-50 border-2 border-gray-300 rounded-xl p-6 transform -rotate-1">
-                    <p className="text-gray-600 font-bold mb-2">👆 Select platforms above to get started</p>
-                    <p className="text-sm text-gray-500">You can add multiple URLs from different platforms</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              {selectedPlatforms.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  animate={isAnimating ? { scale: [1, 1.05, 1] } : {}}
-                  transition={{ duration: 0.5 }}
-                  className="flex justify-center pt-4"
-                >
-                  <NorthSouthMagnetButton
-                    label={`Pull Intel from ${selectedPlatforms.length} Platform${selectedPlatforms.length > 1 ? 's' : ''}`}
-                    onClick={handleSubmit}
-                    disabled={isAnimating}
-                  />
-                </motion.div>
-              )}
-
-              {/* Examples */}
-              <div className="text-center pt-4">
-                <p className="text-sm text-gray-500 mb-3">💡 Pro Tip: Add multiple platforms for deeper insights!</p>
+              {/* Example URLs */}
+              <div className="text-center">
+                <p className="text-sm text-gray-500 mb-2">Examples:</p>
                 <div className="flex flex-wrap justify-center gap-2 text-xs">
-                  <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200 font-bold">LinkedIn + Website</span>
-                  <span className="bg-pink-50 text-pink-700 px-3 py-1 rounded-full border border-pink-200 font-bold">Instagram + YouTube</span>
-                  <span className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full border border-gray-200 font-bold">All Platforms</span>
+                  <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-200">LinkedIn profiles</span>
+                  <span className="bg-gray-50 text-gray-700 px-2 py-1 rounded border border-gray-200">Company websites</span>
+                  <span className="bg-pink-50 text-pink-700 px-2 py-1 rounded border border-pink-200">Instagram accounts</span>
+                  <span className="bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200">YouTube channels</span>
+                  <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded border border-purple-200">X/Twitter profiles</span>
                 </div>
               </div>
+              
+              <motion.div
+                animate={isAnimating ? { scale: [1, 1.05, 1] } : {}}
+                transition={{ duration: 0.5 }}
+                className="flex justify-center"
+              >
+                <NorthSouthMagnetButton
+                  label="Pull Lead Intel"
+                  onClick={handleSubmit}
+                  disabled={isAnimating}
+                />
+              </motion.div>
             </div>
           </div>
         </motion.div>
@@ -350,7 +217,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
           >
             <div className="flex items-center space-x-2 justify-center">
               <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="font-bold text-green-700">Researching across {selectedPlatforms.length} platform{selectedPlatforms.length > 1 ? 's' : ''}...</span>
+              <span className="font-bold text-green-700">Researching prospect...</span>
             </div>
             <p className="text-sm text-green-600 mt-2 text-center">
               Results will be sent to {user?.email}
