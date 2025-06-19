@@ -16,11 +16,11 @@ const SampleBriefSection: React.FC = () => {
         </div>
 
         <div className="relative bg-white border-3 border-gray-900 shadow-[16px_16px_0_0_rgb(17,24,39)] transform -rotate-1 hover:rotate-0 transition-transform duration-500 min-h-[1400px]">
-          {/* Paper texture and lines - Extended coverage */}
+          {/* Paper texture and lines - Extended coverage with BLUE lines */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
-            {/* Notebook lines - Full coverage with more lines */}
+            {/* Notebook lines - Full coverage with more lines - CHANGED TO BLUE */}
             {Array.from({ length: 200 }).map((_, i) => (
-              <div key={i} className="absolute left-0 right-0 w-full h-0.5 bg-blue-100" style={{ top: `${40 + i * 16}px` }}></div>
+              <div key={i} className="absolute left-0 right-0 w-full h-0.5 bg-blue-200" style={{ top: `${40 + i * 16}px` }}></div>
             ))}
             {/* Red margin line - Full height */}
             <div className="absolute top-0 left-16 w-0.5 h-full bg-red-300 opacity-60"></div>
@@ -613,7 +613,7 @@ const SampleBriefSection: React.FC = () => {
                   <p className="text-xs text-gray-600">score improvement</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
