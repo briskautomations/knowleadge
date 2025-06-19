@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, Globe, Linkedin, Instagram, Youtube, Twitter, Plus, X } from 'lucide-react';
+import { Lightbulb, Globe, Linkedin, Instagram, Youtube, Plus, X, ArrowDown, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { GoogleUser } from '@/lib/google-auth';
 import SparklesCore from './SparklesCore';
@@ -19,6 +19,13 @@ interface PlatformType {
   borderColor: string;
   placeholder: string;
 }
+
+// Custom Twitter/X Icon Component
+const TwitterIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+);
 
 const platforms: PlatformType[] = [
   {
@@ -51,7 +58,7 @@ const platforms: PlatformType[] = [
   {
     id: 'twitter',
     name: 'X/Twitter',
-    icon: Twitter,
+    icon: TwitterIcon,
     color: 'text-white',
     bgColor: 'bg-black',
     borderColor: 'border-gray-400',
@@ -86,6 +93,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
       // Add platform
       setSelectedPlatforms(prev => [...prev, platformId]);
     }
+  };
+
+  const removePlatform = (platformId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setSelectedPlatforms(prev => prev.filter(id => id !== platformId));
+    setUrls(prev => {
+      const newUrls = { ...prev };
+      delete newUrls[platformId];
+      return newUrls;
+    });
   };
 
   const updateUrl = (platformId: string, url: string) => {
@@ -195,13 +212,80 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
           </p>
         </motion.div>
 
-        {/* Multi-Platform Input System */}
+        {/* Subtle subtitle text */}
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed"
+        >
+          Turn any URL into your competitive advantage
+        </motion.p>
+
+        {/* Multi-Platform Input System with Cartoonish Arrows */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="max-w-3xl mx-auto"
+          className="max-w-3xl mx-auto relative"
         >
+          {/* Animated Arrows Around Container */}
+          <motion.div
+            animate={{ 
+              x: [0, 10, 0],
+              rotate: [0, 5, 0]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute -left-16 top-1/2 transform -translate-y-1/2 hidden lg:block"
+          >
+            <div className="relative">
+              <ArrowRight className="w-12 h-12 text-blue-400 opacity-60" />
+              <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full border-2 border-gray-800"></div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            animate={{ 
+              x: [0, -10, 0],
+              rotate: [0, -5, 0]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1.5
+            }}
+            className="absolute -right-16 top-1/2 transform -translate-y-1/2 hidden lg:block"
+          >
+            <div className="relative">
+              <ArrowLeft className="w-12 h-12 text-red-400 opacity-60" />
+              <div className="absolute -top-2 -left-2 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-800"></div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            animate={{ 
+              y: [0, -8, 0],
+              rotate: [0, 3, 0]
+            }}
+            transition={{ 
+              duration: 2.5, 
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.5
+            }}
+            className="absolute -top-16 left-1/2 transform -translate-x-1/2 hidden lg:block"
+          >
+            <div className="relative">
+              <ArrowDown className="w-10 h-10 text-purple-400 opacity-60" />
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-pink-400 rounded-full border border-gray-800"></div>
+            </div>
+          </motion.div>
+
           <div className="relative p-6 bg-white border-3 border-gray-900 rounded-3xl shadow-[12px_12px_0_0_rgb(17,24,39)] transform hover:rotate-1 transition-all duration-300">
             {/* Decorative elements */}
             <div className="absolute top-4 right-4 w-6 h-6 border-2 border-yellow-400 rounded-full opacity-60"></div>
@@ -284,12 +368,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({ user }) => {
                               className="border-2 border-gray-300 rounded-lg text-sm p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white"
                             />
                           </div>
-                          <button
-                            onClick={() => togglePlatform(platformId)}
+                          <motion.button
+                            onClick={(e) => removePlatform(platformId, e)}
+                            whileHover={{ scale: 1.1, rotate: 90 }}
+                            whileTap={{ scale: 0.9 }}
                             className="w-8 h-8 bg-red-400 border-2 border-gray-900 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors flex-shrink-0"
                           >
                             <X className="w-4 h-4 text-white" />
-                          </button>
+                          </motion.button>
                         </div>
                       </motion.div>
                     );
